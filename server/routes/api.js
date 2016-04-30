@@ -4,16 +4,15 @@ var config = require('../../config');
 
 var secretKey = config.secretKey;
 
-var jsonwebtoken = require('jsonwebtoken');
 
 function generateToken (user) {
-	var token = jsonwebtoken.sign({
-		id: user._id,
-		username: user.username
-	}, secretKey, {
-		expiresInMinute: 1440
-	});
+	console.log(user.username);
+	var token = user.username;
 	return token;
+}
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 module.exports = function(app, express){
@@ -24,6 +23,7 @@ module.exports = function(app, express){
 			password: req.body.password
 		});
 		var token = generateToken(user);
+		console.log(user);
 		user.save(function(err){
 			if (err){
 				console.log(err);
@@ -42,7 +42,7 @@ module.exports = function(app, express){
 	api.post('/login', function(req, res){
 		User.findOne({
 			username: req.body.username
-		}).select('username password').exec(function(err, user) {
+		}).select('username password score').exec(function(err, user) {
 			if(err) throw err;
 
 			if (!user){
@@ -53,6 +53,7 @@ module.exports = function(app, express){
 				if (!validPassword){
 					res.send({ message: "Invalid Password "})
 				} else {
+					console.log(user);
 					var token = generateToken(user);
 
 					res.json({
@@ -68,17 +69,21 @@ module.exports = function(app, express){
 	api.use(function(req, res, next){
         console.log("Checking for token");
         var token = req.body.token || req.param('token') || req.headers['x-access-token'];
-        
+        console.log(token);
         // check if token exist
         if(token) {
-            jsonwebtoken.verify(token, secretKey, function(err, decoded){
-               if(err) {
-                   res.status(403).send({ success: false, message: "Failed to authenticate!"});
-               } else {
-                   req.decoded = decoded;
-                   next();
-               }
-            });
+            User.findOne({
+            	username: token
+            }).select('username password score').exec(function(err, user) {
+            	if (err) throw err;
+            	if (!user){
+            		res.send({ message: "User doesn't exist" });
+            	} else {
+                    req.decoded = user;
+            		next();
+            	}
+            })
+
         } else {
             res.status(403).send({ success: false, message: "No Token Provided" });
         }
@@ -87,12 +92,39 @@ module.exports = function(app, express){
 	api.get('/me', function(req, res){
 		res.json(req.decoded);
 	});
-	// api.post('/upload', function(req, res){
-	// 	var sticker = new Sticker({
-	// 		 link: req.body.link,
+	api.post('/upload', function(req, res){
+		var riddles = ["Under a chair in Pauley Pavillion", "Under a table in Pauley Pavillion", "Somewhere close to the stairs in Pauley Pavillion"];
+		var index = getRandomInt(0, 2);
+		var sticker = new Sticker({
+			 link: req.body.link,
+			 creator: req.decoded.id,
+			 riddle: riddles[index]
+		});
+		sticker.save(function(err, newSticker){
+			if (err){
+				res.send(err);
+				return;
+			} else {
+				res.json({
+					success: true,
+					message: "My Sticker Uploaded"
+				});
+			}
+		})
+	});
+	api.post('/connect', function(req, res){
+		var currentUserId = req.decoded.username;
+		var ownerTag = req.body.objectID;
+		Sticker.find({ 
+			creator: ownerTag
+		}, function(err, sticker){
+			if (err){
+				res.send(err);
+			} else {
 
-	// 	});
-	// });
+			}
+		})
+	});
 
 	return api;
 }
