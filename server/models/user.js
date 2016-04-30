@@ -10,7 +10,7 @@ var UserSchema = new Schema({
    password: { type: String, required: 'Password is required', select: false},
    score: { type: Number, default: 0 },
    mySticker: { type: Schema.Types.ObjectId, ref: "Sticker" },
-   foundStickers: [{ type: Schema.Types.ObjectId, ref: "Message" }]
+   foundStickers: [{ type: Schema.Types.ObjectId, ref: "Sticker" }]
 });
 
 UserSchema.pre('save', function(next){
