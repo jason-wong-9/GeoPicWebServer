@@ -3,14 +3,10 @@ var bcrypt = require('bcrypt-nodejs');
 
 var Schema = mongoose.Schema;
 
-
-
 var UserSchema = new Schema({
    username: { type: String, trim: true, required: 'Username is required', index: { unique: true}},
    password: { type: String, required: 'Password is required', select: false},
-   score: { type: Number, default: 0 },
-   mySticker: { type: Schema.Types.ObjectId, ref: "Sticker" },
-   foundStickers: [{ type: Schema.Types.ObjectId, ref: "Sticker" }]
+   score: { type: Number, default: 0 }
 });
 
 UserSchema.pre('save', function(next){

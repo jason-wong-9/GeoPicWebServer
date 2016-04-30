@@ -21,7 +21,7 @@ app.use(morgan('dev'));
 var api = require('./server/routes/api')(app, express);
 app.use('/api', api);
 
-var port = process.env.PORT;
+var port = 8080;
 
 app.listen(port, function(err){
   if (err) {
