@@ -1,0 +1,27 @@
+{
+  "name": "geopic",
+  "version": "1.0.0",
+  "description": "A web server built for Geo Pic android app",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jason-wong-9/GeoPicWebServer.git"
+  },
+  "author": "Jason",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jason-wong-9/GeoPicWebServer/issues"
+  },
+  "homepage": "https://github.com/jason-wong-9/GeoPicWebServer#readme",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "mongoose": "^4.4.14",
+    "morgan": "^1.7.0"
+  }
+}
