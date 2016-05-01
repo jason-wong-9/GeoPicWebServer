@@ -6,7 +6,9 @@ var Schema = mongoose.Schema;
 var UserSchema = new Schema({
    username: { type: String, trim: true, required: 'Username is required', index: { unique: true}},
    password: { type: String, required: 'Password is required', select: false},
-   score: { type: Number, default: 0 }
+   avatar: { type: String },
+   foundStickerScore: { type: Number, default: 0 },
+   userStickerScore: { type: Number, default: 0 }
 });
 
 UserSchema.pre('save', function(next){

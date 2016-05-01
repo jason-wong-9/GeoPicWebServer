@@ -14,13 +14,31 @@ function generateToken (user) {
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+function incrementScore(id, isFound){
+	User.findOne({ _id: id }, function(err, user){
+		if (err){
+			res.send(err);
+			return;
+		} else {
+			if (isFound){
+				user.foundStickerScore += 1;
+			} else {
+				user.userStickerScore += 1;
+			}
+			user.save(function(err, updatedUser){
+				console.log("user updated");
+			});
+		}
+	});
+}
 
 module.exports = function(app, express){
 	var api = express.Router();
 	api.post('/signup', function(req, res){
 		var user = new User({
 			username: req.body.username,
-			password: req.body.password
+			password: req.body.password,
+			avatar: req.body.avatar
 		});
 		var token = generateToken(user);
 		console.log(user);
@@ -74,7 +92,7 @@ module.exports = function(app, express){
         if(token) {
             User.findOne({
             	username: token
-            }).select('username password score').exec(function(err, user) {
+            }).select('username password foundStickerScore userStickerScore').exec(function(err, user) {
             	if (err) throw err;
             	if (!user){
             		res.send({ message: "User doesn't exist" });
@@ -113,17 +131,48 @@ module.exports = function(app, express){
 		})
 	});
 	api.post('/connect', function(req, res){
-		var currentUserId = req.decoded.username;
-		var ownerTag = req.body.objectID;
-		Sticker.find({ 
+		var currentUserId = req.decoded.id;
+		var ownerTag = req.body.tagid;
+		var success = true;
+		console.log(ownerTag);
+		Sticker.findOne({ 
 			creator: ownerTag
 		}, function(err, sticker){
 			if (err){
 				res.send(err);
 			} else {
+				console.log(sticker);
+				if (!sticker.found){
+					sticker.found = [];
+				}
 
+					
+
+				if (sticker.found.indexOf(currentUserId) === -1){
+					sticker.found.push(currentUserId);
+					incrementScore(currentUserId, 1);
+					incrementScore(ownerTag, 0);
+					sticker.save(function(err){
+						if (err){
+							console.log(err);
+						} else {
+							res.json({
+								success: true,
+								message: "Added"
+							});
+						}
+					});
+				} else {
+					res. json({
+						success: false,
+						message: "Already Added"
+					})
+				}
 			}
-		})
+
+
+	
+		});
 	});
 
 	return api;
