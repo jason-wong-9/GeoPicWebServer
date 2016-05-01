@@ -23,6 +23,11 @@ app.use('/api', api);
 
 var port = 8080;
 
+if (!config.dev){
+	port = process.env.PORT;
+}
+
+
 app.listen(port, function(err){
   if (err) {
     console.log(error);
