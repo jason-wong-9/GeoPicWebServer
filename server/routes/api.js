@@ -38,7 +38,7 @@ module.exports = function(app, express){
 		var user = new User({
 			username: req.body.username,
 			password: req.body.password,
-			avatar: req.body.avatar
+			avatar: "http://s3.amazonaws.com/37assets/svn/765-default-avatar.png"
 		});
 		var token = generateToken(user);
 		console.log(user);
@@ -114,7 +114,7 @@ module.exports = function(app, express){
 		//var riddles = ["Under a chair in Pauley Pavillion", "Under a table in Pauley Pavillion", "Somewhere close to the stairs in Pauley Pavillion"];
 		//var index = getRandomInt(0, 2);
 		var sticker = new Sticker({
-			 link: req.body.link,
+			 link: "http://4.bp.blogspot.com/-nn9iheSg_HY/VOfoPqYN-bI/AAAAAAAAODA/lZ259SUvwiY/s1600/laughing-smiley-cries-tears-of-joy.png",
 			 creator: req.decoded.id,
 			 riddle: req.body.riddle
 		});
