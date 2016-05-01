@@ -11,9 +11,9 @@ function generateToken (user) {
 	return token;
 }
 
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+// function getRandomInt(min, max) {
+//     return Math.floor(Math.random() * (max - min + 1)) + min;
+// }
 function incrementScore(id, isFound){
 	User.findOne({ _id: id }, function(err, user){
 		if (err){
@@ -111,12 +111,12 @@ module.exports = function(app, express){
 		res.json(req.decoded);
 	});
 	api.post('/upload', function(req, res){
-		var riddles = ["Under a chair in Pauley Pavillion", "Under a table in Pauley Pavillion", "Somewhere close to the stairs in Pauley Pavillion"];
-		var index = getRandomInt(0, 2);
+		//var riddles = ["Under a chair in Pauley Pavillion", "Under a table in Pauley Pavillion", "Somewhere close to the stairs in Pauley Pavillion"];
+		//var index = getRandomInt(0, 2);
 		var sticker = new Sticker({
 			 link: req.body.link,
 			 creator: req.decoded.id,
-			 riddle: riddles[index]
+			 riddle: req.body.riddle
 		});
 		sticker.save(function(err, newSticker){
 			if (err){
